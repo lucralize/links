@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central de Links | Lucralize</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1428; --bg2:#11192E; --red:#D52A43; --ice:#AADBE3; --white:#fff;
+    --line:rgba(170,219,227,.14); --muted:rgba(255,255,255,.68);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:40px 20px 60px}
+  header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:32px}
+  header img{height:46px}
+  h1{font-family:'Comfortaa',sans-serif;font-weight:700;font-size:clamp(1.6rem,4vw,2.3rem);color:var(--ice)}
+  header p{color:var(--muted);max-width:560px;font-size:.95rem}
+  .search{width:100%;max-width:460px;padding:12px 18px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--white);font:inherit;outline:none}
+  .search:focus{border-color:var(--red)}
+  .group{margin-top:34px}
+  .group h2{font-family:'Comfortaa',sans-serif;font-size:1.05rem;color:var(--ice);margin-bottom:14px;padding-left:12px;border-left:3px solid var(--red)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:transform .15s,border-color .15s}
+  .card:hover{transform:translateY(-3px);border-color:var(--red)}
+  .card h3{font-family:'Comfortaa',sans-serif;font-size:1.05rem}
+  .card p{color:var(--muted);font-size:.88rem;flex:1}
+  .tag{align-self:flex-start;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ice);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .btn{font-size:.82rem;font-weight:500;text-decoration:none;padding:8px 16px;border-radius:8px;transition:opacity .15s}
+  .btn.primary{background:var(--red);color:#fff}
+  .btn.ghost{border:1px solid var(--line);color:var(--ice)}
+  .btn:hover{opacity:.85}
+  .empty{display:none;text-align:center;color:var(--muted);margin-top:40px}
+  footer{margin-top:50px;text-align:center;color:var(--muted);font-size:.78rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="https://raw.githubusercontent.com/lucralize/pagina-principal/main/lucralize-logo-horizontal.png" alt="Lucralize" onerror="this.style.display='none'">
+    <h1>Central de Links</h1>
+    <p>Todos os portais, dashboards e ferramentas do Grupo Lucralize em um só lugar.</p>
+    <input class="search" id="q" type="search" placeholder="Buscar por nome ou descrição..." aria-label="Buscar">
+  </header>
+
+  <main id="content"></main>
+  <p class="empty" id="empty">Nenhum resultado encontrado.</p>
+
+  <footer>Grupo Lucralize · Lucralize Contabilidade &amp; Lucralize Tech</footer>
+</div>
+
+<script>
+  const BASE = "https://lucralize.github.io/";
+  const GH = "https://github.com/lucralize/";
+
+  // Para adicionar um novo link: inclua um objeto em "items" do grupo desejado.
+  // Se o repositório não tiver site (Pages), use "site: null".
+  const groups = [
+    {
+      title: "Operação e atendimento",
+      items: [
+        { name: "Central de Triagem", repo: "central-triagem", tag: "Portal interno",
+          desc: "Onde a equipe recebe e organiza a documentação dos clientes: Recebimento de Documentos e checklist em quatro módulos, sincronizados em tempo real com o SharePoint (o que muda aqui reflete lá e vice-versa)." },
+        { name: "Dashboard de Atendimento", repo: "dashboard-lucralize", tag: "Dashboard",
+          desc: "Indicadores do atendimento ao cliente em tempo real: puxa os dados da API do Digisac e cruza com a lista de clientes do SharePoint, mostrando volume, equipe e perfil dos atendimentos." },
+        { name: "Dashboard Financeiro", repo: "dashboard-lucralize", site: "https://lucralize.github.io/dashboard-lucralize/dashboard-financeiro.html", tag: "Dashboard",
+          desc: "Visão financeira da Lucralize em painel separado do dashboard de atendimento, para acompanhar os números do negócio sem misturar com a operação." },
+        { name: "Consumo Claude", repo: "consumo-claude", tag: "Dashboard",
+          desc: "Mostra quanto cada conta e membro da organização está consumindo do Claude, para acompanhar o uso e planejar o plano. Acesso restrito a quem tem login do tenant Lucralize." }
+      ]
+    },
+    {
+      title: "Contábil e societário",
+      items: [
+        { name: "Portal Contábil", repo: "portal-contabil", tag: "Portal interno",
+          desc: "Portal de Lançamentos Contábeis: a equipe entra com a conta Microsoft e registra os lançamentos, que ficam salvos direto no SharePoint." },
+        { name: "Portal Societário", repo: "portal-societario", tag: "Portal interno",
+          desc: "Controle dos processos societários (abertura, alterações, baixas). A equipe acessa com login Microsoft e o cliente preenche as informações por um formulário externo, tudo no SharePoint." },
+        { name: "Portal Certificadora", repo: "portal-certificadora", tag: "Portal",
+          desc: "Portal para a operação de certificação digital da Lucralize." }
+      ]
+    },
+    {
+      title: "Ferramentas e simuladores",
+      items: [
+        { name: "Simulador Regime Híbrido", repo: "simulador-hibrido", tag: "Simulador público",
+          desc: "Ferramenta pública que compara o Simples Nacional com o regime híbrido (Simples + CBS/IBS da reforma tributária), para a empresa ver qual cenário fica mais vantajoso. Não pede dados de contato." },
+        { name: "Calculadora PJ x CLT", repo: "calculadora-pjxclt", tag: "Calculadora",
+          desc: "Compara o custo para a empresa e o ganho líquido do profissional entre contratar como PJ ou CLT." },
+        { name: "Escala 6x1", repo: "escala6x1", tag: "Calculadora",
+          desc: "Simula o impacto da escala de trabalho 6x1 na operação e nos custos da empresa." }
+      ]
+    },
+  ];
+
+  const content = document.getElementById("content");
+  const empty = document.getElementById("empty");
+
+  function render(filter = "") {
+    const f = filter.trim().toLowerCase();
+    content.innerHTML = "";
+
+    const items = groups.flatMap(g => g.items)
+      .filter(i => !f || (i.name + " " + i.desc + " " + i.tag + " " + i.repo).toLowerCase().includes(f))
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    const total = items.length;
+
+    {
+      const sec = document.createElement("section");
+      sec.className = "group";
+      sec.innerHTML = `<div class="grid"></div>`;
+      const grid = sec.querySelector(".grid");
+
+      items.forEach(i => {
+        const site = i.site === null ? null : (i.site || BASE + i.repo + "/");
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <span class="tag">${i.tag}</span>
+          <h3>${i.name}</h3>
+          <p>${i.desc}</p>
+          <div class="actions">
+            ${site ? `<a class="btn primary" href="${site}" target="_blank" rel="noopener">Abrir</a>` : ""}
+          </div>`;
+        grid.appendChild(card);
+      });
+      content.appendChild(sec);
+    }
+
+    empty.style.display = total ? "none" : "block";
+  }
+
+  document.getElementById("q").addEventListener("input", e => render(e.target.value));
+  render();
+</script>
+</body>
+</html>
